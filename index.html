@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+		<title>抽奖</title>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		.award-body{
+			height: 100vh;
+			width: 100vw;
+			background: url(img/yearbg.jpg) no-repeat center center;
+			background-size: cover;
+			overflow: hidden;
+			position: relative;
+		}
+		
+		.lucky{
+			position: absolute;
+			max-width: 750px;
+			max-height: 750px;
+			width: 39vw;
+			height: 39vw;
+			top: 0;
+			bottom: 0;
+			margin:  auto;
+			left: 11vw;
+		}
+		
+		.pointer{
+            position: absolute;
+            width: 10vw;
+            height: 12vw;
+            top: 50%;
+            left: 50%;
+            transform: translate(-49%,-58%);
+            z-index: 2;
+            cursor: pointer;
+        }
+        
+        .pointer img{
+        	max-width: 100%;
+        	max-height: 100%;
+        }
+        .rotate{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+			height: 100%;
+            
+        }
+        
+        .rotate img{
+            width: 100%;
+            height: 100%;
+        }
+        
+        .award{
+		    display: none;
+		       position: fixed;
+		       width: 580px;
+		       height: 200px;
+		       top: 0;
+		       bottom: 0;
+		       left: 0;
+		       right: 0;
+		       margin:auto;
+		       z-index: 1000;
+		   }
+		   
+		   .award-info{
+		           background-color: #fef2da;
+		           border-radius: 10px;
+		           padding: 10px 0;
+		   }
+		   .award-info h3{
+		   		text-align: center;
+               font-size: 28px;
+               color: #df344f;
+               margin-top: 10px;
+		   	}
+		   	
+		   	.award-info h3 small{
+		   		display: block;
+                color: #82192f;
+		   	}
+		   	
+		   	.award-info h3 i{
+		   		font-style: normal;
+		   	}
+		   	
+		   	.btn-default{
+		               display: block;
+		               width: 150px;
+		               background-color: #ffb400;
+		               color: #fc4061;
+		               margin: 25px auto;
+		               font-weight: bold;
+		               border: none;
+		               font-size: 20px;
+		               text-align: center;
+		               border-radius: 20px;
+		               padding: 8px 8px;
+		               cursor: pointer;
+		               outline: none;
+		           }
+		           
+		   .mask{
+			    position: fixed;
+			    left: 0;
+			    right: 0;
+			    top: 0;
+			    bottom: 0;
+			    background-color: #000;
+			    opacity: .7;
+			    z-index: 99;
+			    display: none;
+			}
+			
+			.setPanel{
+				position: fixed;
+			       width: 350px;
+			       height: 400px;
+			       top: 0;
+			       bottom: 0;
+			       left: 0;
+			       right: 0;
+			       margin:auto;
+			       z-index: 1000;
+			       background-color: #fff;
+			       padding: 30px;
+			       border-radius: 20px;
+			       display: none;
+			}
+			
+			
+			.setPanel input{
+				width: 100px;
+				margin:0 5px 0 10px;
+			}
+			
+			.setPanel label{
+				display: block;
+				margin-top: 5px;
+				color: #666;
+			}
+			
+			.tips{
+				color: #df344f;
+				margin-top: 10px;
+			}
+			
+			.close{
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		width: 30px;
+		height: 30px;
+		text-align: center;
+		line-height: 30px;
+		color: #000;
+		font-size: 20px;
+		z-index: 1;
+		cursor: pointer;
+		border-radius: 100%;
+	}
+	
+	.btn{
+		position: absolute;
+		bottom:30px;
+		right: 110px;
+	}
+	</style>
+	<body>
+		<div class="award-body">
+			<div class="lucky">
+				<div class="pointer"><img src="img/zhuan.png" alt="pointer"></div>
+				<div class="rotate"><img id="rotate" src="img/yearPan_03.png" alt="turntable"></div>
+			</div>
+			<button class="btn btn-default set">抽奖设置</button>
+		</div>
+		<div class="mask"></div>
+		<div class="award">
+			<div class="award-info">
+				<h3>恭喜您抽中<i>五等奖</i><small>陶瓷刀</small></h3>
+				<div class="btn-default continue">继续抽奖</div>
+			</div>
+		</div>
+		<div class="setPanel">
+			<div class="close">X</div>
+			<div class="chance">
+				<h3>中奖概率</h3>
+				<label>一等奖<input type="text" value="" />%</label>
+				<label>二等奖<input type="text" value="" />%</label>
+				<label>三等奖<input type="text" value="" />%</label>
+				<div class="tips">请填写整数数字，并且所有概率之和是100!</div>
+			</div>
+			<div class="prize">
+				<h3>中奖数量</h3>
+				<label>一等奖数量<input type="text" value="" /> 余量：<i class="yi"></i></label>
+				<label>二等奖数量<input type="text" value="" /> 余量：<i class="er"></i></label>
+				<label><input type="hidden" value="-1" /></label>
+				<div class="tips">请填写整数数字，奖品数量！</div>
+			</div>
+			<button class="btn-default comfirm" style="display: inline-block;margin-right: 20px;">确认</button>
+			<button class="btn-default clearData" style="display: inline-block;">清除数据</button>
+		</div>
+		<audio src="http://public.chinadd.com/rongshengmusic.mp3" style="width: 0px;height: 0px;" loop='loop' id="music01"></audio>
+	</body>
+	<script src="js/awardRotate.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function() {
+			var chance = localStorage.getItem('chance')&&localStorage.getItem('chance').split(',').map(v=>+v);
+			var prizeNums = localStorage.getItem('prizeNums')&&localStorage.getItem('prizeNums').split(',').map(v=>+v);
+			var music = $('#music01')[0];  
+			(function(){
+				if(chance&&prizeNums){
+					//设置余量
+					$('.yi').text(prizeNums[0]);
+					$('.er').text(prizeNums[1]);
+					var cinputs = $('.chance input');
+					for(var i = 0;i<chance.length;i++){
+						cinputs.eq(i).val(chance[i]);
+					}
+					var pinputs = $('.prize input');
+					for(var i = 0;i<prizeNums.length-1;i++){
+						pinputs.eq(i).val(prizeNums[i]);
+					}
+				}
+			})();
+			var bRotate = false;
+			var rotateFn = function(awards, angles, txt, name) {
+				bRotate = !bRotate;
+				$('#rotate').stopRotate();
+				$('#rotate').rotate({
+					angle: 0,
+					animateTo: angles + 2160,
+					duration: 5000,
+					callback: function() {
+						music.pause();
+						var info = localStorage.getItem('awardInfo').split(',').map(function(v){
+							return +v;
+						});
+						info[awards]++;
+						localStorage.awardInfo = info;
+						if(--prizeNums[awards] === 0){
+							chance[chance.length-1] += chance[awards];
+							chance[awards] = 0;
+						}
+						localStorage.setItem('awardInfo',info);
+						localStorage.setItem('chance',chance);
+						localStorage.setItem('prizeNums',prizeNums);
+						$('.yi').text(prizeNums[0]);
+						$('.er').text(prizeNums[1]);
+						var me = $('.award-info');
+						$('h3 i', me).text(txt);
+						$('h3 small', me).text(name);
+						showMask();
+						$('.award').show();
+						
+					}
+				})
+			};
+			$('.pointer').click(function() {
+				if(!chance||!prizeNums) {
+					alert('请点击右下角，先设置抽奖信息！');
+					return;
+				}
+				if(bRotate) return;
+				music.play();
+				var nth = randonAward();
+				var deg = Math.random()*10>>0 >= 5 ? -60*nth : -60*nth-180;
+				switch(nth) {
+					case 0:
+						rotateFn(0, deg , '一等奖', '500元现金 ');
+						break;
+					case 1:
+						rotateFn(1, deg, '二等奖', '200元现金 ');
+						break;
+					case 2:
+						rotateFn(2, deg, '三等奖', '小米音响');
+						break;
+					default:
+						alert('已经没有可以抽取的奖项！');
+				}
+			});
+			
+			
+			function randonAward(){
+				var r = Math.random()*99+1>>0;
+				for(var i = 0,sum = 0;i<chance.length;i++){
+					sum += chance[i];
+					if(r<=sum) return i;
+				}
+				return -1;
+			}
+			
+			 function showMask(){
+				$('.mask').show();
+			}
+				    
+			function hideMask(){
+				$('.mask').hide();
+			}
+			
+			 $('.continue').click(function(){
+			   	$('.award').hide();
+			   	hideMask();
+			   	bRotate = !bRotate;
+			 })
+			 
+		 	$('.close').click(function(){
+				$('.setPanel').hide();
+				hideMask();
+			});
+			
+			$('.set').click(function(){
+				$('.setPanel').show();
+				showMask();
+			})
+			
+			$('.comfirm').click(function(){
+				var temp = [];
+				var canSet = true;
+				$('.chance label input').each(function(){
+					var p = $(this).val();
+					if(p == ''){
+						canSet = false;
+					}
+					temp.push(+p);
+				})
+				var temp2= [];
+				$('.prize label input').each(function(){
+					var p = $(this).val();
+					if(p == ''){
+						canSet = false;
+					}
+					temp2.push(+p);
+				})
+				if(canSet){
+					localStorage.setItem('awardInfo',[0,0,0]);
+					localStorage.setItem('chance',temp);
+					localStorage.setItem('prizeNums',temp2);
+					alert('设置成功!');
+					window.location.reload();
+				}else{
+					alert('请填写完整的数据！');
+				}
+			})
+			
+			$('.clearData').click(function(){
+				$('.setPanel input:visible').val('');
+				localStorage.removeItem('awardInfo');
+				localStorage.removeItem('chance');
+				localStorage.removeItem('prizeNums');
+				alert('数据已删除，请重新设置!');
+				window.location.reload();
+			})
+			
+			$(window).on('keydown',function(e){
+				if(e.keyCode == '17'){
+					$('.set').trigger('click');
+				}
+				if(e.keyCode == '13'){
+					$('.pointer').trigger('click');
+				}
+			})
+		});
+	</script>
+
+</html>
